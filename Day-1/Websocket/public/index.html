@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <style>
+      body {
+        background-color: #000;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+      }
+
+      .btn {
+        padding: 24px 48px;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: teal;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+        border: 1px solid rgb(3, 48, 49);
+        border-radius: 10px;
+        width: 100%;
+      }
+
+      .btn:hover {
+        background-color: rgb(3, 74, 74);
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 600px;
+        max-width: 800px;
+        padding: 20px;
+        border: 1px solid lightslategray;
+        border-radius: 5px;
+        font-size: 18px;
+      }
+
+      #message {
+        padding: 24px 48px;
+        outline: none;
+        border: 1px solid gray;
+        background-color: #0b0708;
+        border-radius: 5px;
+        color: #fff;
+      }
+
+      #message::placeholder {
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <input type="text" name="" id="message" placeholder="Enter message..." />
+      <button class="btn" id="sendBtn">Create WebSocket Connection</button>
+    </div>
+
+    <div id="allMessages"></div>
+
+    <!-- Load script:socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      //   let socket;
+      //   function createSocketConnection() {
+      //     socket = io();
+      //   }
+      //   document.querySelector(".btn").addEventListener("click", () => {
+      //     createSocketConnection();
+      //   });
+      const socket = io();
+      const sendButton = document.getElementById("sendBtn");
+      const messageInput = document.getElementById("message");
+      const allMessages = document.getElementById("allMessages");
+
+      // Agar backend se `Message` event aata hai, jo bhi mag aata hai, log the message
+      socket.on("Message", (message) => {
+        console.log("Message: ", message);
+        const p = document.createElement("p");
+        p.textContent = message;
+        allMessages.appendChild(p);
+      });
+
+      sendButton.addEventListener("click", () => {
+        const message = messageInput.value;
+        console.log(message);
+        socket.emit("user-message", message);
+        messageInput.value = "";
+      });
+    </script>
+  </body>
+</html>
