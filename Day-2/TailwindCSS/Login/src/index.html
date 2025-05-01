@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link href="./output.css" rel="stylesheet" />
+  </head>
+  <body class=" flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-700 to-gray-900">
+    <div
+      class="bg-gray-700 flex items-center justify-center flex-col rounded-lg p-8 shadow-2xl max-w-sm w-full"
+    >
+      <h2 class="text-center text-3xl text-white mb-6 font-bold">Login</h2>
+      <form class="w-full">
+        <div class="mb-4">
+          <label
+            class="block text-sm font-medium text-gray-300 mb-2"
+            for="email"
+          >
+            Email
+          </label>
+          <input
+            class="w-full px-3 py-2 bg-gray-600 outline-none border border-gray-400 rounded-md text-white focus:outline-none focus:ring ring-blue-500"
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Enter your email..."
+          />
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2" for=""
+            >Password</label
+          >
+          <input
+            class="w-full px-3 py-2 bg-gray-600 outline-none border border-gray-400 rounded-md text-white focus:outline-none focus:ring ring-blue-500"
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Enter your password..."
+          />
+        </div>
+
+        <button
+          class="w-full bg-blue-600 text-white py-2 outline-none rounded-md hover:bg-blue-700 shadow-lg"
+          type="submit"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
