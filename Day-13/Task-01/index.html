@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Change BG COLOR</title>
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      /* border: 1px solid green; */
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #button {
+      padding: 16px 50px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background-color: lightskyblue;
+      transition: background-color 200ms ease-in-out;
+    }
+
+    #button:hover {
+      background-color: rgb(110, 174, 214);
+    }
+
+    #button_2 {
+      padding: 16px 50px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background-color: lightskyblue;
+      transition: background-color 200ms ease-in-out;
+    }
+
+    #button_2:hover {
+      background-color: rgb(110, 174, 214);
+    }
+  </style>
+  <body>
+    <div class="container">
+      <h1>Click Me To Change Background Color</h1>
+      <!-- <button onclick="changebackgroundColor('black', 'white')" id="button">
+        Click Me
+      </button> -->
+
+      <!-- <button onclick="changebackgroundColor('white', 'black')" id="button_2">
+        Click Me for White
+      </button> -->
+
+      <button id="button">Click Me</button>
+      <button id="button_2">Click Me for White</button>
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
