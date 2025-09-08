@@ -5,6 +5,11 @@ const obj = {
     }
 }
 
+// console.log(`Hello from JS`);
+// setTimeout(obj.greet, 2 * 1000);
+// console.log(`Bye Bye`);
+
+// TODO: SOLUTION: bind() => bind the context
 console.log(`Hello from JS`);
-setTimeout(obj.greet, 2 * 1000);
+setTimeout(() => obj.greet.bind(obj), 5*1000)
 console.log(`Bye Bye`);
