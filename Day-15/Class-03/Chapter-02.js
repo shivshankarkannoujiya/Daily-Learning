@@ -12,8 +12,9 @@ function negativeIndex(arr){
             const index = Number(prop);
             if (index < 0) {
                 target[target.length + index] = value
+            } else {
+                target[index] = value;
             }
-            target[index] = value;
             return true;
         }
     })
@@ -25,6 +26,8 @@ console.log(arr[-1]);
 
 arr[-1] = 22
 console.log(arr[-1]);
+
+console.log(arr)
 
 
 
