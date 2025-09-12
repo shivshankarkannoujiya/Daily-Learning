@@ -101,7 +101,33 @@ function unlinkFileWithPromise(filepath) {
 //     .then(() => fsV2.unlink(`./hello.txt`))
 //     .catch((err) => console.log(`ERROR:`, err))
 
-readFileWithPromise(`./hello.txt`, `utf-8`)
-    .then(content => writeFileWithPromise(`backup.txt`, content))
-    .then(() => unlinkFileWithPromise(`./hello.txt`))
-    .catch((err) => console.log(`ERROR: `, err) )
+// readFileWithPromise(`./hello.txt`, `utf-8`)
+//     .then(content => writeFileWithPromise(`backup.txt`, content))
+//     .then(() => unlinkFileWithPromise(`./hello.txt`))
+//     .catch((err) => console.log(`ERROR: `, err))
+    
+// const fileContent = await readFileWithPromise(`./hello.txt`, `utf-8`)
+// await writeFileWithPromise(`backup.txt`, fileContent)
+// await unlinkFileWithPromise(`./hello.txt`)
+
+function wait(seconds) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(), seconds * 10000)
+    })
+}
+
+async function doTask() {
+    try {
+        const fileContent = await readFileWithPromise(`./hello.txt`, `utf-8`)
+        await writeFileWithPromise(`backup.txt`, fileContent)
+        await wait(10);
+        await unlinkFileWithPromise(`./hello.txt`)
+    } catch (error) {
+        console.log(`ERROR: `, error)
+    }
+}
+
+doTask() 
+    .then(() => {
+        console.log(`ALL DONE`);
+    })
