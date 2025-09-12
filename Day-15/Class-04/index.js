@@ -1,4 +1,43 @@
 import fs from "fs";
+import fsV2 from "fs/promises"
+
+
+// TODO: Promisification
+function readFileWithPromise(filepath, encoding) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filepath, encoding, (error, content) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(content)
+            }
+        })
+    })
+}
+
+function writeFileWithPromise(filepath, content) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filepath, content, (err) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+}
+
+function unlinkFileWithPromise(filepath) {
+    return new Promise((resolve, reject) => {
+        fs.unlink(filepath, (err) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+}
 
 // console.log(`Starting program....`)
 // const contents = fs.readFileSync("./hello.txt", "utf-8")
@@ -29,29 +68,40 @@ import fs from "fs";
 // })
 
 
-// TODO:
+// TODO: CALLBACK HELL
 // 1. Read the file content from hello.txt
 // 2. Then create a new file backup.txt
 // 3. Copy the contents of the hello file to backup file
 // 4. delete the hello file
 
-fs.readFile("./hello.txt", "utf-8", function (err, content) {
-    if (err) {
-        console.log("ERROR: ", err)
-    } else {
-        console.log("File Read success: ", content);
-        fs.writeFile("backup.txt", content, function (err) {
-            if (err) {
-                console.log("ERROR IN WRITTING backup.txt:", err)
-            } else {
-                fs.unlink("./hello.txt", function (err) {
-                    if (err) {
-                        console.log("ERROR WHILE DELETING FILE: ", err)
-                    } else {
-                        console.log("File deleted successfully...")
-                    }
-                })
-            }
-        })
-    }
-})
+// fs.readFile("./hello.txt", "utf-8", function (err, content) {
+//     if (err) {
+//         console.log("ERROR: ", err)
+//     } else {
+//         console.log("File Read success: ", content);
+//         fs.writeFile("backup.txt", content, function (err) {
+//             if (err) {
+//                 console.log("ERROR IN WRITTING backup.txt:", err)
+//             } else {
+//                 fs.unlink("./hello.txt", function (err) {
+//                     if (err) {
+//                         console.log("ERROR WHILE DELETING FILE: ", err)
+//                     } else {
+//                         console.log("File deleted successfully...")
+//                     }
+//                 })
+//             }
+//         })
+//     }
+// })
+
+// fsV2
+//     .readFile(`./hello.txt`, `utf-8`)
+//     .then((content) => fsV2.writeFile(`backup.txt`, content))
+//     .then(() => fsV2.unlink(`./hello.txt`))
+//     .catch((err) => console.log(`ERROR:`, err))
+
+readFileWithPromise(`./hello.txt`, `utf-8`)
+    .then(content => writeFileWithPromise(`backup.txt`, content))
+    .then(() => unlinkFileWithPromise(`./hello.txt`))
+    .catch((err) => console.log(`ERROR: `, err) )
