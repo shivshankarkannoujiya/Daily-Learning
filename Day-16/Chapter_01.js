@@ -4,6 +4,8 @@
     But, we want to take only last request. 
     eg: Input box
  */
+// Remove past request => keep a reference of it
+// Fire a new request
 
 function debouunce(fn, delay) {
     let myId;
