@@ -1,3 +1,5 @@
+// demonstrating parameter shadowing with rest parameters
+
 var arr = [10, 11, 12, 13, 14];
 
 function print(b, ...arr) {
