@@ -65,3 +65,26 @@ schedular.addTask(
 schedular.addTask(
     () => new Promise((res) => setTimeout(() => res("Task 4"), 5 * 1000))
 )
+
+
+/*
+TODO: Real world implementation:  
+CHAT APP
+    User chat continuously
+    We can not store all the chats synchronously
+*/
+
+function saveToDB(message) {
+    return new Promise((resolve, reject) => setTimeout(() => {
+        console.log(`Message ${message} saved to DB`)
+        resolve()
+    }, 2 * 1000))
+}
+
+function chat() {
+    const messages = Array(100).fill(null)
+    messages.forEach((_, index) => {
+        console.log(`Message ${index}`)
+        schedular.addTask(() => saveToDB())
+    })
+}
