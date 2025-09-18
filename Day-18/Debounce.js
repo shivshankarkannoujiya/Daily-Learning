@@ -14,7 +14,7 @@ const search = (query) => {
     console.log(`Searching for: `, query)
 }
 
-searchWithDebounce = debounce(search)
+searchWithDebounce = debounce(search, 2 * 1000);
 
 searchWithDebounce(`H`)
 searchWithDebounce(`Ha`)
