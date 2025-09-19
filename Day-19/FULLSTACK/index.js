@@ -3,6 +3,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./utils/db.js";
 
+// import Routes
+import userRoutes from "./routes/user.route.js"
+
+
+
 dotenv.config({
     path: "./.env",
     debug: true
@@ -19,11 +24,12 @@ app.use(
   })
 );
 
+
+// API ROUTES
+app.use("/api/v1/users", userRoutes)
+
 const PORT = process.env.PORT ?? 8000;
 
-app.get("/", async (req, res) => {
-  res.send(`Hello from first server`);
-});
 
 connectDB()
   .then(() => {
