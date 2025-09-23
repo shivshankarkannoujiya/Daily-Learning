@@ -34,8 +34,9 @@ const registerUser = async (req, res) => {
         console.log(user);
 
         const token = crypto.randomBytes(32).toString('hex');
-        user.verificationToken = token;
 
+        user.verificationToken = token;
+        user.verificationTokenExpires = Date.now() + 10 * 60 * 1000;
         await user.save();
 
         // TODO: send email
@@ -115,6 +116,7 @@ const verifyUser = async (req, res) => {
 
         user.isVerified = true;
         user.verificationToken = undefined; // check if => null
+        user.verificationTokenExpires = undefined;
         await user.save();
 
         res.status(200).json({
@@ -195,4 +197,181 @@ const loginUser = async (req, res) => {
     }
 };
 
-export { registerUser, loginUser, verifyUser };
+const getMe = async (req, res) => {
+    try {
+        console.log('REACHED AT PROFILE LEVEL...');
+        const user = await User.findById(req.user?.id).select('-password');
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+        res.status(200).json({
+            success: true,
+            user,
+        });
+    } catch (error) {
+        console.error('');
+        return res.status(500).json({
+            success: false,
+            error,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const logoutUser = async (req, res) => {
+    res.cookie('token', '', {});
+    res.status(200).json({
+        success: true,
+        message: 'User logged out successfully',
+    });
+};
+
+const forgotUserPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required',
+            });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid credentials',
+            });
+        }
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresIn = Date.now() + 10 * 60 * 1000;
+
+        user.resetPasswordToken = token;
+        user.resetPasswordTokenExpires = expiresIn;
+        await user.save();
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.MAILTRAP_HOST,
+            port: process.env.MAILTRAP_PORT,
+            secure: false, // true for 465
+            auth: {
+                user: process.env.MAILTRAP_USERNAME,
+                pass: process.env.MAILTRAP_PASSWORD,
+            },
+        });
+
+        const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${token}`;
+        const mailOptions = {
+            from: process.env.MAILTRAP_SENDEREMAIL,
+            to: user.email,
+            subject: 'Verify your account !',
+            text: `Reset your password using link: ${resetUrl}`,
+            html: `<p>Click <a href = "${resetUrl}">here</> to reset your password</p>`,
+        };
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset link sent to your email',
+        });
+    } catch (error) {
+        console.error('Forgot Password Error: ', error);
+        return res.status(500).json({
+            success: false,
+            error,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const resetUserPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required or token expired',
+            });
+        }
+
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordTokenExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found',
+            });
+        }
+
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTokenExpires = undefined;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successfully',
+        });
+    } catch (error) {
+        console.error('RESET PASSWORD FAILED: ', error);
+        return res.status(500).json({
+            success: false,
+            error,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const updateUserProfile = async (req, res) => {
+    const { name } = req.body;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user?.id,
+            {
+                $set: {
+                    name,
+                },
+            },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'profile update successfully',
+        });
+    } catch (error) {
+        console.error('PROFILE UPDATE FAILED: ', error);
+        return res.status(500).json({
+            success: false,
+            error,
+            message: 'Internal server error',
+        });
+    }
+};
+
+export {
+    registerUser,
+    loginUser,
+    verifyUser,
+    getMe,
+    logoutUser,
+    forgotUserPassword,
+    resetUserPassword,
+    updateUserProfile,
+};
