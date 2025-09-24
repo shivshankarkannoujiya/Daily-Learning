@@ -212,4 +212,223 @@ const loginUser = async (req, res) => {
     }
 };
 
-export { registerUser, verifyUser, loginUser };
+const getMe = async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.user?.id,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            user,
+            message: 'user fetched successfully',
+        });
+    } catch (error) {
+        console.error('failed to get user: ', error);
+        return res.status(500).json({
+            success: false,
+            error,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const logoutUser = async (req, res) => {
+    try {
+        res.status(200).cookie('token', '', {}).json({
+            success: true,
+            message: 'user logged out successfully',
+        });
+    } catch (error) {
+        console.error('user log out failed: ', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const forgotUserPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required',
+            });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found',
+            });
+        }
+
+        const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+        const resetPasswordTokenExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+        await prisma.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                resetPasswordToken,
+                resetPasswordTokenExpiry,
+            },
+        });
+
+        const transporter = nodemailer.createTransport({
+            host: process.env.MAILTRAP_HOST,
+            port: process.env.MAILTRAP_PORT,
+            secure: false,
+            auth: {
+                user: process.env.MAILTRAP_USERNAME,
+                pass: process.env.MAILTRAP_PASSWORD,
+            },
+        });
+
+        const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetPasswordToken}`;
+        const mailOptions = {
+            from: process.env.MAILTRAP_SENDEREMAIL,
+            to: user.email,
+            subject: 'Reset your password',
+            text: `Reset your password using link: ${resetUrl}`,
+            html: `<p>Click<a href="${resetUrl}">here</a>to reset your password</p>`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({
+            success: true,
+            message: 'Password reset link sent to your email',
+        });
+    } catch (error) {
+        console.error('Forgot password failed: ', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const resetUserPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required or token expired',
+            });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                resetPasswordToken: token,
+                resetPasswordTokenExpiry: {
+                    gte: Date.now(),
+                },
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found',
+            });
+        }
+
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                password,
+                resetPasswordToken: undefined,
+                resetPasswordTokenExpiry: undefined,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            updatedUser,
+            message: 'user password reset successfully',
+        });
+    } catch (error) {
+        console.error('Password reset failed: ', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const updateUserProfile = async (req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) {
+            return res.status(400).json({
+                success: false,
+                message: 'name is required',
+            });
+        }
+
+        await prisma.user.findUnique({
+            where: {
+                id: req.user?.id,
+            },
+            data: {
+                name,
+            },
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'User profile updated successfully',
+        });
+    } catch (error) {
+        console.error('User profile update failed: ', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+export {
+    registerUser,
+    verifyUser,
+    loginUser,
+    getMe,
+    logoutUser,
+    forgotUserPassword,
+    resetUserPassword,
+    updateUserProfile
+};
