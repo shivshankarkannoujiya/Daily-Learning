@@ -107,7 +107,10 @@ const verifyUser = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ verificationToken: token });
+        const user = await User.findOne({
+            verificationToken: token, verificationTokenExpires: {
+            $gt: Date.now()
+        } });
         if (!user) {
             return res.status(400).json({
                 message: 'Invalid token',
@@ -270,7 +273,7 @@ const forgotUserPassword = async (req, res) => {
             to: user.email,
             subject: 'Verify your account !',
             text: `Reset your password using link: ${resetUrl}`,
-            html: `<p>Click <a href = "${resetUrl}">here</> to reset your password</p>`,
+            html: `<p>Click <a href = "${resetUrl}">here</a> to reset your password</p>`,
         };
         await transporter.sendMail(mailOptions);
 
