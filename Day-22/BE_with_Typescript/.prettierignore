@@ -1,0 +1,20 @@
+# Node
+node_modules
+package-lock.json
+yarn.lock
+
+# Build output
+dist
+build
+coverage
+
+# Environment & configs
+.env
+*.log
+
+# Other tools
+.prettierignore
+.eslintcache
+
+# Misc
+*.md
