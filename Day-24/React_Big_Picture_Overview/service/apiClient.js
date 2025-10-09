@@ -50,3 +50,8 @@ class ApiClient {
     return this.customFetch('/users/me');
   }
 }
+
+const apiClient = new ApiClient()
+
+export default apiClient
+
