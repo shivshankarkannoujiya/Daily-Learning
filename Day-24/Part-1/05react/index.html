@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="root">This is classic div</div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+        const Chai = ({name}) => (
+            <div>
+                <h1>{name}</h1>    
+            </div>
+        )
+
+        const App = () => (
+            <div>
+                <h1>Chai Variations...</h1>     
+                <Chai name = "Ginger Tea"/>
+                <Chai name = "Masala Chai"/>
+           </div>
+        )
+
+        const container = document.getElementById("root")
+        const root = ReactDOM.createRoot(container)
+        root.render(
+            <App/>
+        )
+    </script>
+</body>
+</html>
