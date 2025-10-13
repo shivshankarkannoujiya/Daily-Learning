@@ -4,7 +4,7 @@ export function useRandomQuote() {
 
     const [quotes, setQuotes] = useState([])
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(false)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         fetch(`https://api.freeapi.app/api/v1/public/quotes`)
