@@ -7,6 +7,9 @@ export default function App() {
 
     const { quotes, loading, error } = useRandomQuote()
 
+    if (loading) return <h2>Loading...</h2>
+    if (error) return <p>Error: { error }</p>
+
     return (
         <div>
             <h1>Hello from App</h1>
