@@ -1,8 +1,13 @@
 import React from "react";
 import { useNotification } from "../context/NotificationContext";
+import { useCartStore } from "../store/cartStore";
 
 const ContactForm = () => {
   const { count, addNotification, resetNotification } = useNotification();
+  const cartCount = useCartStore((state) => state.cart.length);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const { removeFromCart, clearCart } = useCartStore();
+  
   return (
     <div>
       <h1>Welcome to Contact</h1>
