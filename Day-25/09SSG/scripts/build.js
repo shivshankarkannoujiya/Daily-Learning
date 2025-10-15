@@ -16,9 +16,15 @@ const htmlTemplatePath = path.resolve(__dirname, "../src/template.html")
 const outputHtmlPath = path.resolve(outDir, "index.html");
 const template = await fs.readFile(htmlTemplatePath, "utf-8")
 
+// SSG
 const appHtml = ReactDOMServer.renderToStaticMarkup(
     React.createElement(App, { teas })
 )
+
+// SSR
+// const appHtml = ReactDOMServer.renderToString(
+//     React.createElement(App, { teas })
+// )
 
 const finalHtml = template.replace("<!--App-->", appHtml)
 
