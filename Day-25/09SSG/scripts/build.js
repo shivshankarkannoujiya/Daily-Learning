@@ -21,7 +21,7 @@ const appHtml = ReactDOMServer.renderToStaticMarkup(
     React.createElement(App, { teas })
 )
 
-// SSR
+// SSR and need an express server
 // const appHtml = ReactDOMServer.renderToString(
 //     React.createElement(App, { teas })
 // )
